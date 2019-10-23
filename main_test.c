@@ -37,6 +37,7 @@ struct response {
 
 question *questions;
 response *responses;
+int num_responses;
 
 int main() {
     //read in questions
@@ -76,6 +77,7 @@ int main() {
         x >> outer_loop;
 
         responses = new response[outer_loop];
+        num_responses = outer_loop;
 
         for(int i = 0; i < outer_loop; i++) {
             getline(in, line);
