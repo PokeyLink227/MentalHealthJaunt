@@ -67,7 +67,7 @@ int main() {
 		"ADHD",
 		"Anexity",
 		"OCD",
-		"idek"
+		"PTSD"
 	};
 
 	char THRESHOLD = 2, MAX_CYCLES = 1;
