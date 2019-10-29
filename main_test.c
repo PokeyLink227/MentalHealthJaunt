@@ -1,119 +1,153 @@
+#include "pch.h"
 #include <iostream>
 #include <vector>
 #include <fstream>
 #include <sstream>
 
-struct question {
-    std::string body;
-    answer* answers;
-    unsigned int num_answers;
-    
-    question(std::string &name, int num_answers_in) {
-        body = name;
-        answers = new answer[num_answers_in];
-        num_answers = num_answers_in;
-    }
-};
+#include "stdlib.h"
+#include "time.h"
+
+
+inline int nextInt(std::ifstream *, char);
 
 struct answer {
-    std::string body, code;
-    int next;
-    
-    answer(std::string &name, std::string &code_in, int next_in) {
-        body = name;
-        code = code_in;
-        next = next_in;
-    }
+	std::string text;
+	char scores[5];
+
+	answer() {
+		text = "N/A";
+	}
+
+	answer(std::string &text_in, std::ifstream *in) {
+		text = text_in;
+		scores[0] = nextInt(in, ' ');
+		scores[1] = nextInt(in, ' ');
+		scores[2] = nextInt(in, ' ');
+		scores[3] = nextInt(in, ' ');
+		scores[4] = nextInt(in, '\n');
+	}
+
 };
 
-struct response {
-    std::string body, code;
-    
-    response(std::string &name, std::string &code_in) {
-        body = name;
-        code = code_in;
-    }
+struct question {
+	std::string text;
+	std::vector<answer> answers;
+	char topic;
+	bool asked;
+
+	question() {
+		text = "N/A";
+		asked = false;
+	}
+
+	question(std::string &text_in, std::ifstream *in) {
+		text = text_in;
+		answers = std::vector<answer>(nextInt(in, '\n'));
+		asked = false;
+		topic = nextInt(in, '\n');
+	}
 };
 
-question *questions;
-response *responses;
-int num_responses;
+
+inline char sum(char *ray) {
+	char total = 0;
+	for (char c = 0; c < 5; c++) total += ray[c];
+	return total;
+}
+
+void read_web(std::vector<question> &);
+char *ask_question(question *);
+
 
 int main() {
-    //read in questions
-    {
-        std::ifstream in("file");
-        int outer_loop, inner_loop, num;
-        std::string line, line2, line3;
+	srand(time(0));
+	std::vector<question> questions;
+	std::vector<std::string> messages = {
+		"Depression",
+		"ADHD",
+		"Anexity",
+		"OCD",
+		"idek"
+	};
 
-        getline(in, line);
-        std::sstream x(line);
-        x >> outer_loop;
+	char THRESHOLD = 2, MAX_CYCLES = 1;
+	char CYCLE = 0;
 
-        questions = new question[outer_loop];
 
-        for(int i = 0; i < outer_loop; i++) {
-            getline(in, line);
-            getline(in, line2);
-            x = std::sstream(line2);
-            x >> num;
-            questions[i] = question(line, num);
+	read_web(questions);
+	int asked = 0;
+	char scores[6] = { 0,0,0,0,0 };
 
-            getline(in, line);
-            x = std::sstream(line);
-            x >> inner_loop;
-            for(int j = 0; j < inner_loop; j++) {
-                getline(in, line);
-                getline(in, line2);
-                getline(in, line3);
-                x = std::sstream(line3);
-                x >> num;
-                questions[i].answers[j] = answer(line, line2, num);
-            }
-        }
+	while (CYCLE < MAX_CYCLES && asked < questions.size()) {
+		char found = -1;
+		if (sum(scores) != 0) {
+			int r = rand() % sum(scores);
+			for (char c = 0; c < 5; c++) {
+				r -= scores[c];
+				if (r <= 0 && found == -1) found = c;
+			}
+		}
+		char q = 0, stop = questions.size();
+		do { q = rand() % questions.size(); stop--; if (stop == 0) found = -1; } while (questions[q].asked && (found != -1 && questions[q].topic == found));
+		char *ret = ask_question(&questions[q]);
+		for (char c = 0; c < 5; c++) scores[c] += ret[c];
+		bool save = false;
+		for (char c = 0; c < 5; c++) if (scores[c] >= THRESHOLD) save = true;
+		if (save) CYCLE++;
+		asked++;
+	}
 
-        getline(in, line);
-        std::sstream x(line);
-        x >> outer_loop;
+	std::cout << "ask your doctor about: ";
+	bool save = true;
+	for (char c = 0; c < 5; c++) if (scores[c] >= THRESHOLD) {
+		std::cout << messages[c] << ", ";
+		save = false;
+	}
 
-        responses = new response[outer_loop];
-        num_responses = outer_loop;
+	if (save) std::cout << "nothing, your are healthy.";
 
-        for(int i = 0; i < outer_loop; i++) {
-            getline(in, line);
-            getline(in, line2);
-            responses[i] = response(line, line2);
-        }
-        in.close();
-    }
-    
-    //eval questions
-    
-    response_num = -1;
-    
-    {
-        int current = 0;
-        std::string code = "";
-        while(current != -1) {
-            std::cout << questions[current].body << '\n';
-            for(int i = 0; i < questions[current].num_answers; i++) {
-                std::cout << questions[current].answers[i].body << '\n';
-            }
-            int input;
-            std::cin >> input;
-        
-            code += questions[current].answers[input].code;
-            current = questions[current].answers[input].next;
-        }
-        
-        for (int i = 0; i < num_responses; i++) {
-            if ( code == responses[i] ) response_num = i;
-        }
-        
-    }
-    
-    // disp result
-    {
-        std::cout << responses[responses_num].body;
-    }
 }
+
+char *ask_question(question *Q) {
+	std::cout << (*Q).text << '\n';
+	for (int i = 0; i < (*Q).answers.size(); i++) if((*Q).answers[i].text != "%") std::cout << i+1 << ". " << (*Q).answers[i].text << '\n';
+	int input = -1;
+
+	while (input <= 0 && input >= (*Q).answers.size()) {
+		std::cout << ": ";
+		std::cin >> input;
+		input--;
+	}
+	(*Q).asked = true;
+	system("cls");
+	return (*Q).answers[input].scores;
+}
+
+inline int nextInt(std::ifstream *stream, char del) {
+	std::string line;
+	getline(*stream, line, del);
+	std::stringstream x(line);
+	int ret;
+	x >> ret;
+	return ret;
+}
+
+void read_web(std::vector<question> &out) {
+	std::ifstream file("C:\\Users\\Thomas\\Desktop\\MHJQ.txt");
+
+	int num_questions = nextInt(&file, '\n');  // questions
+	out = std::vector<question>(num_questions);
+	std::string line;
+
+
+	for (int i = 0; i < num_questions; i++) {
+		getline(file, line); // question name
+		out[i] = question(line, &file); // number of answers, topic id
+		for (int j = 0; j < out[i].answers.size(); j++) {
+			getline(file, line); // answer
+			out[i].answers[j] = answer(line, &file); // 5 numbers
+		}
+	}
+
+}
+
