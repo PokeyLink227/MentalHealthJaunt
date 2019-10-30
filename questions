@@ -1,4 +1,4 @@
-32
+45
 Do you think you are sleeping too much?
 2
 0
@@ -269,7 +269,94 @@ Yes
 0 0 2 0 0
 No
 0 0 -2 0 0
-
-
-
-
+Do you have intrusive thoughts that are aggressive or about taboo topics?
+2
+3
+Yes
+0 0 0 1 0
+No
+0 0 0 -1 0
+Do you "over check" things often?
+2
+3
+Yes
+0 0 0 1 0
+No
+0 0 0 -1 0
+Do you need to constantly check on something or arrange things?
+2
+3
+Yes
+0 0 0 3 0
+No
+0 0 0 -1 0
+Do you have ritualistic behaviors that "feel right"?
+2
+3
+Yes
+0 0 0 2 0
+No
+0 0 0 -1 0
+Do you worry about acting on senseless urges?
+2
+3
+Yes
+0 0 0 1 0
+No
+0 0 0 -1 0
+Do you fear germs or clean excessively?
+2
+3
+Yes
+0 0 0 3 0
+No
+0 0 0 -1 0
+Do you avoid doing things because they are "evil" or "unlucky"?
+2
+3
+Yes
+0 0 0 3 0
+No
+0 0 0 -1 0
+Do you expirence repettive anexity inducing thoughts?
+2
+3
+Yes
+0 0 1 1 0
+No
+0 0 0 -1 0
+Do you struggle to control obsessive thoughts and behaviors?
+3
+2
+Yes
+0 0 0 3 0
+No
+0 0 0 -2 0
+Do you have temporary anexiety reliefe rituals like counting, checking or cleaning?
+2
+3
+Yes
+0 0 0 2 0
+No
+0 0 0 -1 0
+Do you often need to confess or seek reassurances?
+2
+3
+Yes
+0 0 0 2 0
+No
+0 0 0 -1 0
+Do you ever spend your day thinking obsessive thoughts or preforming "rituals"?
+2
+3
+Yes
+0 0 0 2 0
+No
+0 0 0 0 0
+Do you often unnecessarialy re-read letters/emails?
+2
+3
+Yes
+0 0 0 2 0
+No
+0 0 0 0 0
